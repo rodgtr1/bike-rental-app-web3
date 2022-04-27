@@ -7,7 +7,6 @@ import {
     Stack,
     Collapse,
     Icon,
-    Link,
     Popover,
     PopoverTrigger,
     PopoverContent,
@@ -15,6 +14,7 @@ import {
     useBreakpointValue,
     useDisclosure,
   } from '@chakra-ui/react';
+  import { Link } from 'react-router-dom';
   import {
     HamburgerIcon,
     CloseIcon,
@@ -44,7 +44,7 @@ import {
               color={useColorModeValue('gray.800', 'white')}
               fontWeight={900}
               fontSize={'x-large'}>
-              BikeChain
+              <Link to="/">BikeChain</Link>
             </Text>
           </Flex>
   
