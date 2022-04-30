@@ -80,8 +80,8 @@ export default function CurrentTotals() {
                 />
             </SimpleGrid>
             <Flex justifyContent={'center'} alignItems={'center'}>
-                <PayForm />
                 <AddToBalanceForm />
+                <PayForm />
             </Flex>
         </Box>
     );

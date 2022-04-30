@@ -21,9 +21,12 @@ import {
     ChevronDownIcon,
     ChevronRightIcon,
   } from '@chakra-ui/icons';
+  import { useContext } from 'react';
+  import { BlockchainContext } from '../context/BlockchainContext';
   
   export default function Navbar() {
     const { isOpen, onToggle } = useDisclosure();
+    const { connectWallet, currentAccount } = useContext(BlockchainContext);
   
     return (
       <Box>
@@ -54,6 +57,7 @@ import {
             direction={'row'}
             spacing={6}>
             <Button
+            onClick={connectWallet}
               display={{ md: 'inline-flex' }}
               fontSize={'sm'}
               fontWeight={600}
@@ -63,7 +67,7 @@ import {
               _hover={{
                 bg: 'teal.300',
               }}>
-              Connect Wallet
+              {!currentAccount ? "Connect Wallet" : `${currentAccount.slice(0, 5)}...${currentAccount.slice(currentAccount.length - 4)}`}
             </Button>
           </Stack>
         </Flex>
