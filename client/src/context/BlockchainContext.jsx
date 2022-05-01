@@ -9,6 +9,9 @@ export const BlockchainProvider = ({ children }) => {
     const [balance, setBalance] = useState()
     const [renterExists, setRenterExists] = useState()
     const [renter, setRenter] = useState()
+    const [renterBalance, setRenterBalance] = useState()
+    const [due, setDue] = useState()
+    const [duration, setDuration] = useState()
 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
@@ -56,11 +59,12 @@ export const BlockchainProvider = ({ children }) => {
 
     const checkRenterExists = async () => {
         try {
-            console.log(`Current Account: ${currentAccount}`)
-            const renter = await contract.renterExists(currentAccount)
-            setRenterExists(renter);
-            if (renter) {
-                await getRenter();
+            if (currentAccount) {
+                const renter = await contract.renterExists(currentAccount)
+                setRenterExists(renter);
+                if (renter) {
+                    await getRenter();
+                }
             }
         } catch (error) {
             console.log(error)
@@ -69,8 +73,10 @@ export const BlockchainProvider = ({ children }) => {
 
     const getRenter = async () => {
         try {
-            const renter = await contract.getRenter(currentAccount)
-            setRenter(renter)
+            if (currentAccount) {
+                const renter = await contract.getRenter(currentAccount)
+                setRenter(renter)
+            }
         } catch (error) {
             console.log(error)
         }
@@ -87,9 +93,94 @@ export const BlockchainProvider = ({ children }) => {
         }
     }
 
+    const getRenterBalance = async() => {
+        try {
+            if (currentAccount) {
+                const balance = await contract.balanceOfRenter(currentAccount)
+                setRenterBalance(ethers.utils.formatEther(balance))
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const deposit = async(value) => {
+        try {
+            const bnbValue = ethers.utils.parseEther(value);
+            const deposit = await contract.deposit(currentAccount, {value: bnbValue})
+            await deposit.wait()
+            await getRenterBalance();
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const getDue = async() => {
+        try {
+            if (currentAccount) {
+                const due = await contract.getDue(currentAccount)
+                setDue(ethers.utils.formatEther(due));
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const getTotalDuration = async() => {
+        try {
+            if (currentAccount) {
+                const totalDuration = await contract.getTotalDuration(currentAccount)
+                setDuration(Number(totalDuration))
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const makePayment = async(value) => {
+        try {
+            const bnbValue = ethers.utils.parseEther(value);
+            const deposit = await contract.makePayment(currentAccount, {value: bnbValue})
+            await deposit.wait()
+            await getRenter()
+            await getRenterBalance()
+            await getTotalDuration()
+            await getDue();
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const checkOut = async() => {
+        try {
+            const checkOut = await contract.checkOut(currentAccount)
+            await checkOut.wait()
+            await getRenter()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const checkIn = async() => {
+        try {
+            const checkIn = await contract.checkIn(currentAccount)
+            await checkIn.wait()
+            await getRenter()
+            await getDue()
+            await getTotalDuration()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+
     useEffect(() => {
         checkifWalletIsConnected()
         checkRenterExists()
+        getRenterBalance()
+        getDue();
+        getTotalDuration();
     }, [currentAccount])
 
 
@@ -100,7 +191,15 @@ export const BlockchainProvider = ({ children }) => {
                 connectWallet,
                 currentAccount,
                 renterExists,
-                addRenter
+                addRenter,
+                renterBalance,
+                deposit,
+                due,
+                duration,
+                renter,
+                makePayment,
+                checkOut,
+                checkIn
             }}>
                 { children }
         </BlockchainContext.Provider>

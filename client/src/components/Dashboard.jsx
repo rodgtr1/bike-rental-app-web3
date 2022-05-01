@@ -10,7 +10,7 @@ import { BlockchainContext } from "../context/BlockchainContext"
 import ClipLoader from "react-spinners/ClipLoader";
 
 const Dashboard = () => {
-    const { renterExists } = useContext(BlockchainContext)
+    const { renterExists, currentAccount } = useContext(BlockchainContext)
     let [loading, setLoading] = useState(true);
 
     return (
@@ -19,7 +19,7 @@ const Dashboard = () => {
             textAlign={'center'}
             spacing={{ base: 8, md: 14 }}
             py={{ base: 20, md: 36}}>
-        { renterExists == null ? <Center><ClipLoader loading={loading} size={75} /></Center> : renterExists ? <CurrentTotals /> : <RenterForm /> }
+        { renterExists == null && currentAccount ? <Center><ClipLoader loading={loading} size={75} /></Center> : renterExists ? <CurrentTotals /> : <RenterForm /> }
         <Flex justifyContent={'center'} alignItems={'center'}>
             <Bike bike={Bike1}/>
             <Bike bike={Bike2}/>

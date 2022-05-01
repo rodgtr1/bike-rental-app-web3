@@ -8,12 +8,13 @@ import {
     StatNumber,
     useColorModeValue,
 } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import { ReactNode, useContext } from 'react';
 import { RiMoneyDollarCircleLine } from 'react-icons/ri';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 import PayForm from './PayForm';
 import AddToBalanceForm from './AddToBalanceForm';
+import { BlockchainContext } from '../context/BlockchainContext';
 
 function StatsCard(props) {
     const { title, stat, icon, bgColor } = props;
@@ -47,6 +48,7 @@ function StatsCard(props) {
 }
 
 export default function CurrentTotals() {
+    const { renterBalance, due, duration, renter } = useContext(BlockchainContext);
     return (
         <Box maxW="7xl" mx={'auto'} pt={5} px={{ base: 2, sm: 12, md: 17 }}>
             <chakra.h1
@@ -59,22 +61,22 @@ export default function CurrentTotals() {
             <SimpleGrid columns={{ base: 1, md: 4 }} spacing={{ base: 5, lg: 8 }}>
                 <StatsCard
                     title={'BNB Credit'}
-                    stat={'0.05'}
+                    stat={renterBalance}
                     icon={<MdOutlineAccountBalanceWallet size={'3em'} />}
                 />
                 <StatsCard
                     title={'BNB Due'}
-                    stat={'0.001'}
+                    stat={due}
                     icon={<RiMoneyDollarCircleLine size={'3em'} />}
                 />
                 <StatsCard
                     title={'Ride Minutes'}
-                    stat={'7'}
+                    stat={duration}
                     icon={<AiOutlineClockCircle size={'3em'} />}
                 />
                 <StatsCard
                     title={'Bike Status'}
-                    bgColor={'red'}
+                    bgColor={renter && renter.active ? 'green' : 'red'}
                 // stat={'7'}
                 // icon={<AiOutlineClockCircle size={'3em'} />}
                 />
