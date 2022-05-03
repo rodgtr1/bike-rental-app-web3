@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { abi, contractAddress } from '../config.json'
 import { ethers } from "ethers"
+import { toast } from 'react-toastify';
 
 export const BlockchainContext = React.createContext("");
 
@@ -147,7 +148,10 @@ export const BlockchainProvider = ({ children }) => {
             await getTotalDuration()
             await getDue();
         } catch (error) {
-            console.log(error)
+            toast.error(error.data.message, {
+                position: toast.POSITION.TOP_RIGHT
+            });
+        
         }
     }
 
@@ -157,7 +161,9 @@ export const BlockchainProvider = ({ children }) => {
             await checkOut.wait()
             await getRenter()
         } catch (error) {
-            console.log(error)
+            toast.error(error.data.message, {
+                position: toast.POSITION.TOP_RIGHT
+            });
         }
     }
 
@@ -169,7 +175,9 @@ export const BlockchainProvider = ({ children }) => {
             await getDue()
             await getTotalDuration()
         } catch (error) {
-            console.log(error)
+            toast.error(error.data.message, {
+                position: toast.POSITION.TOP_RIGHT
+            });
         }
     }
 

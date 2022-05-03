@@ -15,6 +15,8 @@ import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 import PayForm from './PayForm';
 import AddToBalanceForm from './AddToBalanceForm';
 import { BlockchainContext } from '../context/BlockchainContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function StatsCard(props) {
     const { title, stat, icon, bgColor } = props;
@@ -50,6 +52,7 @@ function StatsCard(props) {
 export default function CurrentTotals() {
     const { renterBalance, due, duration, renter } = useContext(BlockchainContext);
     return (
+        <>
         <Box maxW="7xl" mx={'auto'} pt={5} px={{ base: 2, sm: 12, md: 17 }}>
             <chakra.h1
                 textAlign={'center'}
@@ -86,5 +89,7 @@ export default function CurrentTotals() {
                 <PayForm />
             </Flex>
         </Box>
+        <ToastContainer autoClose={3000} />
+        </>
     );
 }
