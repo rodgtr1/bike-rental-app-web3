@@ -228,7 +228,7 @@ export const BlockchainProvider = ({ children }) => {
         getOwnerBalance();
         isOwner();
         getBalance();
-    }, [currentAccount])
+    }, [currentAccount, owner])
 
 
 
