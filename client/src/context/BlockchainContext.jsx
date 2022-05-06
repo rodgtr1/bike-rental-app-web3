@@ -141,7 +141,7 @@ export const BlockchainProvider = ({ children }) => {
     const makePayment = async(value) => {
         try {
             const bnbValue = ethers.utils.parseEther(value);
-            const deposit = await contract.makePayment(currentAccount, {value: bnbValue})
+            const deposit = await contract.makePayment(currentAccount, bnbValue)
             await deposit.wait()
             await getRenter()
             await getRenterBalance()
