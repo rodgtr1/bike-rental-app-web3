@@ -116,6 +116,7 @@ contract BikeChain {
         require(renters[walletAddress].due > 0, "You do not have anything due at this time.");
         require(renters[walletAddress].balance > amount, "You do not have enough funds to cover payment. Please make a deposit.");
         renters[walletAddress].balance -= amount;
+        ownerBalance += amount;
         renters[walletAddress].canRent = true;
         renters[walletAddress].due = 0;
         renters[walletAddress].start = 0;
