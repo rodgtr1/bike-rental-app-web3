@@ -7,12 +7,14 @@ export const BlockchainContext = React.createContext("");
 
 export const BlockchainProvider = ({ children }) => {
     const [currentAccount, setCurrentAccount] = useState("");
-    const [balance, setBalance] = useState()
+    const [balance, setBalance] = useState(0)
+    const [ownerBalance, setOwnerBalance] = useState();
     const [renterExists, setRenterExists] = useState()
     const [renter, setRenter] = useState()
     const [renterBalance, setRenterBalance] = useState()
     const [due, setDue] = useState()
     const [duration, setDuration] = useState()
+    const [owner, setOwner] = useState(false)
 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
@@ -51,8 +53,43 @@ export const BlockchainProvider = ({ children }) => {
 
     const getBalance = async () => {
         try {
-            const contractBalance = await contract.balanceOf();
-            setBalance(ethers.utils.formatEther(contractBalance))
+            if (owner) {
+                const contractBalance = await contract.balanceOf();
+                setBalance(ethers.utils.formatEther(contractBalance))
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const getOwnerBalance = async () => {
+        try {
+            if (owner) {
+                const contractBalance = await contract.getOwnerBalance();
+                setOwnerBalance(ethers.utils.formatEther(contractBalance))
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const ownerWithdraw = async () => {
+        try {
+            const ownerBalance = await contract.withdrawOwnerBalance();
+            await ownerBalance.wait()
+            await getOwnerBalance()
+            await getBalance()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const isOwner = async () => {
+        try {
+            if (currentAccount) {
+                const owner = await contract.isOwner()
+                setOwner(owner);
+            }
         } catch (error) {
             console.log(error)
         }
@@ -141,7 +178,7 @@ export const BlockchainProvider = ({ children }) => {
     const makePayment = async(value) => {
         try {
             const bnbValue = ethers.utils.parseEther(value);
-            const deposit = await contract.makePayment(currentAccount, {value: bnbValue})
+            const deposit = await contract.makePayment(currentAccount, bnbValue)
             await deposit.wait()
             await getRenter()
             await getRenterBalance()
@@ -151,7 +188,6 @@ export const BlockchainProvider = ({ children }) => {
             toast.error(error.data.message, {
                 position: toast.POSITION.TOP_RIGHT
             });
-        
         }
     }
 
@@ -189,6 +225,9 @@ export const BlockchainProvider = ({ children }) => {
         getRenterBalance()
         getDue();
         getTotalDuration();
+        getOwnerBalance();
+        isOwner();
+        getBalance();
     }, [currentAccount])
 
 
@@ -207,7 +246,11 @@ export const BlockchainProvider = ({ children }) => {
                 renter,
                 makePayment,
                 checkOut,
-                checkIn
+                checkIn,
+                ownerBalance,
+                ownerWithdraw,
+                balance,
+                owner
             }}>
                 { children }
         </BlockchainContext.Provider>

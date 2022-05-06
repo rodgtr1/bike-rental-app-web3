@@ -77,12 +77,17 @@ contract BikeChain {
         return address(this).balance;
     }
 
+    function isOwner() view public returns(bool) {
+        return owner == msg.sender;
+    }
+
     function getOwnerBalance() view public onlyOwner() returns(uint) {
         return ownerBalance;
     }
 
     function withdrawOwnerBalance() payable public {
         payable(owner).transfer(ownerBalance);
+        ownerBalance = 0;
     }
 
     // Get Renter's balance
@@ -111,7 +116,6 @@ contract BikeChain {
         require(renters[walletAddress].due > 0, "You do not have anything due at this time.");
         require(renters[walletAddress].balance > amount, "You do not have enough funds to cover payment. Please make a deposit.");
         renters[walletAddress].balance -= amount;
-        ownerBalance += amount;
         renters[walletAddress].canRent = true;
         renters[walletAddress].due = 0;
         renters[walletAddress].start = 0;
